@@ -1,0 +1,235 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: your-app-ts
+  description: your-app-ts descriptions
+tags:
+  - name: your-app-ts
+    description: Description for your-app-ts
+  - name: Health
+    description: Health Endpoints
+  - name: User
+    description: User Endpoints
+servers:
+  # Added by API Auto Mocking Plugin
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/kelvinsantos/your-app-ts/1.0.0
+  - description: Localhost
+    url: http://localhost:3000
+paths:
+  '/health':
+    get:
+      tags:
+        - your-app-ts
+        - Health
+      summary: Request for health
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                '$ref': '#/components/schemas/HealthResponseDefinition'
+  '/users':
+    post:
+      tags:
+        - your-app-ts
+        - Users
+      summary: Create a user
+      parameters:
+        - in: header
+          name: x-api-key
+          schema:
+            type: string
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              '$ref': '#/components/schemas/CreateUserRequestDefinition'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                '$ref': '#/components/schemas/CreateUserResponseDefinition'
+        '400':
+          description: Bad Request Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateUserError400ResponseDefinition'
+              examples:
+                DUPLICATE_EMAIL_ERROR:
+                  summary: DUPLICATE_EMAIL_ERROR
+                  value:
+                    error_code: DUPLICATE_EMAIL_ERROR
+                    message: ''
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedError'
+              examples:
+                INVALID_API_KEY:
+                  summary: INVALID_API_KEY
+                  value:
+                    error_code: INVALID_API_KEY
+                    message: 'Your API key is invalid'
+
+  '/users/{id}':
+    get:
+      tags:
+        - your-app-ts
+        - Users
+      summary: Get a user
+      parameters:
+        - in: header
+          name: x-api-key
+          schema:
+            type: string
+          required: true
+        - in: path
+          name: id
+          schema:
+            '$ref': '#/components/schemas/id'
+          required: true
+          description: ID of the user to get
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                '$ref': '#/components/schemas/GetUserResponseDefinition'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetUserError404ResponseDefinition'
+              examples:
+                USER_NOT_FOUND_ERROR:
+                  summary: USER_NOT_FOUND_ERROR
+                  value:
+                    error_code: USER_NOT_FOUND_ERROR
+                    message: ''
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedError'
+              examples:
+                INVALID_API_KEY:
+                  summary: INVALID_API_KEY
+                  value:
+                    error_code: INVALID_API_KEY
+                    message: 'Your API key is invalid'
+components:
+  schemas:
+    UnauthorizedError:
+      type: object
+      required:
+        - error_code
+        - message
+      properties:
+        error_code:
+          type: string
+          enum:
+            - INVALID_API_KEY
+        message:
+          type: string
+
+    id:
+      type: string
+
+    HealthResponseDefinition:
+      type: object
+      example:
+        status: 'ok'
+      properties:
+        status:
+          type: string
+
+    CreateUserRequestDefinition:
+      type: object
+      example:
+        email: 'luke.skywalker@tsw.com'
+        first_name: 'Luke'
+        last_name: 'Skywalker'
+        password: 'Mouse123'
+      properties:
+        email:
+          type: string
+        first_name:
+          type: string
+        last_name:
+          type: string
+        password:
+          type: string
+
+    CreateUserResponseDefinition:
+      type: object
+      example:
+        id: '5e6c4c2dfbe10172c1b403aa'
+        email: 'luke.skywalker@tsw.com'
+        first_name: 'Luke'
+        last_name: 'Skywalker'
+      properties:
+        id:
+          type: string
+        email:
+          type: string
+        first_name:
+          type: string
+        last_name:
+          type: string
+        password:
+          type: string
+
+    CreateUserError400ResponseDefinition:
+      type: object
+      required:
+        - error_code
+        - message
+      properties:
+        error_code:
+          type: string
+          enum:
+            - DUPLICATE_EMAIL_ERROR
+        message:
+          type: string
+
+    GetUserResponseDefinition:
+      type: object
+      example:
+        email: 'luke.skywalker@tsw.com'
+        first_name: 'Luke'
+        last_name: 'Skywalker'
+        password: 'Mouse123'
+      properties:
+        email:
+          type: string
+        first_name:
+          type: string
+        last_name:
+          type: string
+        password:
+          type: string
+
+    GetUserError404ResponseDefinition:
+      type: object
+      required:
+        - error_code
+        - message
+      properties:
+        error_code:
+          type: string
+          enum:
+            - USER_NOT_FOUND_ERROR
+        message:
+          type: string
